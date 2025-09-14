@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jharkhand Tourism - Discover the Heart of India</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #d9f99d;
+        }
+
+        .cta-button {
+            background-color: white;
+            color: #059669;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #d9f99d;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1700&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            margin-bottom: 60px;
+        }
+
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+
+        .search-bar {
+            background: white;
+            display: inline-flex;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar input {
+            padding: 18px 25px;
+            border: none;
+            width: 350px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background: #047857;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .primary-btn {
+            background: #059669;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+        .primary-btn:hover {
+            background: #047857;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: 2px solid white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-btn:hover {
+            background: white;
+            color: #059669;
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #0f172a;
+            margin-bottom: 20px;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #059669;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: #d1fae5;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #059669;
+            font-size: 28px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #0f172a;
+        }
+
+        .feature-card p {
+            color: #64748b;
+        }
+
+        /* Destinations Section */
+        .destinations {
+            padding: 80px 0;
+            background: #f1f5f9;
+        }
+
+        .categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn.active {
+            background: #059669;
+            color: white;
+        }
+
+        .destination-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .destination-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-image {
+            height: 200px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            position: relative;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: white;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #059669;
+        }
+
+        .card-rating {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #f59e0b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #0f172a;
+        }
+
+        .card-content p {
+            color: #64748b;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .card-details span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-weight: 700;
+            color: #059669;
+            font-size: 1.2rem;
+        }
+
+        .card-btn {
+            background: #d1fae5;
+            color: #059669;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card-btn:hover {
+            background: #059669;
+            color: white;
+        }
+
+        /* Culture Section */
+        .culture {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+        }
+
+        .culture-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .culture-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        .culture-text p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #4b5563;
+        }
+
+        .culture-feature {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .culture-feature span {
+            width: 30px;
+            height: 30px;
+            background: #ea580c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .culture-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .culture-image {
+            height: 200px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .culture-image:nth-child(2) {
+            margin-top: 30px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .culture-image:nth-child(3) {
+            margin-top: -30px;
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        }
+
+        /* Footer */
+        footer {
+            background: #0f172a;
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #d9f99d;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: #d9f99d;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            width: 40px;
+            height: 40px;
+            background: #1e293b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            background: #059669;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            nav ul {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .search-bar input {
+                width: 200px;
+            }
+            
+            .culture-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .culture-gallery {
+                margin-top: 40px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-mountain"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Jharkhand</h1>
+                    <p>Tourism</p>
+                </div>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="#attractions">Attractions</a></li>
+                    <li><a href="#culture">Culture</a></li>
+                    <li><a href="#adventure">Adventure</a></li>
+                    <li><a href="#travel">Travel Guide</a></li>
+                </ul>
+            </nav>
+            
+            <button class="cta-button">Book Now</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Discover the Heart of India</h2>
+            <p>Experience Jharkhand's pristine waterfalls, lush forests, and rich tribal culture</p>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Where do you want to explore?">
+                <button><i class="fas fa-search"></i> Search</button>
+            </div>
+            
+            <div class="hero-buttons">
+                <button class="primary-btn">Plan Your Journey</button>
+                <button class="secondary-btn">Virtual Tour</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Experience the Future of Travel</h2>
+                <p>Modern solutions for the modern traveler in Jharkhand</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Blockchain Security</h3>
+                    <p>Secure transactions with blockchain technology</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Interactive Maps</h3>
+                    <p>Explore with detailed route planning</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Smart Itinerary</h3>
+                    <p>AI-powered trip customization</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>24/7 AI Support</h3>
+                    <p>Instant assistance for all queries</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinations Section -->
+    <section class="destinations" id="attractions">
+        <div class="container">
+            <div class="section-title">
+                <h2>Discover Jharkhand</h2>
+                <p>From pristine waterfalls to ancient temples, explore the diverse beauty of Jharkhand</p>
+            </div>
+            
+            <div class="categories">
+                <button class="category-btn active">All</button>
+                <button class="category-btn">Waterfall</button>
+                <button class="category-btn">Wildlife</button>
+                <button class="category-btn">Heritage</button>
+                <button class="category-btn">Spiritual</button>
+                <button class="category-btn">Hill Station</button>
+            </div>
+            
+            <div class="destination-grid">
+                <div class="destination-card">
+                    <div class="card-image">
+                        <span class="card-badge">Waterfall</span>
+                        <span class="card-rating"><i class="fas fa-star"></i> 4.8</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>Hundru Falls</h3>
+                        <p>Spectacular 322 feet waterfall cascading through rocky terrain</p>
+                        <div class="card-details">
+                            <span><i class="fas fa-map-marker-alt"></i> Ranchi</span>
+                            <span><i class="fas fa-calendar-alt"></i> Oct-Feb</span>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">₹50</div>
+                            <button class="card-btn">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="destination-card">
+                    <div class="card-image" style="background:linear-gradient(135deg, #22c55e 0%, #16a34a 100%)">
+                        <span class="card-badge">Wildlife</span>
+                        <span class="card-rating"><i class="fas fa-star"></i> 4.6</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>Betla National Park</h3>
+                        <p>Home to tigers, elephants and diverse flora and fauna</p>
+                        <div class="card-details">
+                            <span><i class="fas fa-map-marker-alt"></i> Latehar</span>
+                            <span><i class="fas fa-calendar-alt"></i> Nov-Apr</span>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">₹200</div>
+                            <button class="card-btn">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="destination-card">
+                    <div class="card-image" style="background:linear-gradient(135deg, #f97316 0%, #ea580c 100%)">
+                        <span class="card-badge">Heritage</span>
+                        <span class="card-rating"><i class="fas fa-star"></i> 4.9</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>Jagannath Temple</h3>
+                        <p>Ancient temple showcasing exquisite Kalinga architecture</p>
+                        <div class="card-details">
+                            <span><i class="fas fa-map-marker-alt"></i> Ranchi</span>
+                            <span><i class="fas fa-calendar-alt"></i> Year round</span>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">Free</div>
+                            <button class="card-btn">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="destination-card">
+                    <div class="card-image" style="background:linear-gradient(135deg, #a855f7 0%, #9333ea 100%)">
+                        <span class="card-badge">Spiritual</span>
+                        <span class="card-rating"><i class="fas fa-star"></i> 4.7</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>Deoghar</h3>
+                        <p>Sacred pilgrimage site with the famous Baidyanath Temple</p>
+                        <div class="card-details">
+                            <span><i class="fas fa-map-marker-alt"></i> Deoghar</span>
+                            <span><i class="fas fa-calendar-alt"></i> Oct-Mar</span>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">Free</div>
+                            <button class="card-btn">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Culture Section -->
+    <section class="culture" id="culture">
+        <div class="container">
+            <div class="culture-content">
+                <div class="culture-text">
+                    <h2>Rich Cultural Heritage</h2>
+                    <p>Jharkhand is home to diverse tribal communities, each with unique traditions, festivals, and art forms that have been preserved for centuries.</p>
+                    
+                    <div class="culture-feature">
+                        <span>✓</span>
+                        <p>32+ Tribal Communities</p>
+                    </div>
+                    
+                    <div class="culture-feature">
+                        <span>✓</span>
+                        <p>Traditional Festivals & Celebrations</p>
+                    </div>
+                    
+                    <div class="culture-feature">
+                        <span>✓</span>
+                        <p>Ancient Art & Craft Traditions</p>
+                    </div>
+                    
+                    <button class="primary-btn">Explore Culture</button>
+                </div>
+                
+                <div class="culture-gallery">
+                    <div class="culture-image"></div>
+                    <div class="culture-image"></div>
+                    <div class="culture-image"></div>
+                    <div class="culture-image"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Jharkhand Tourism</h3>
+                    <p>Discover the hidden gems of India's heartland with our curated travel experiences.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Attractions</a></li>
+                        <li><a href="#">Travel Packages</a></li>
+                        <li><a href="#">Events & Festivals</a></li>
+                        <li><a href="#">Gallery</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Help & Support</h3>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">How to Book</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contact Info</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Tourism House, Ranchi, Jharkhand</li>
+                        <li><i class="fas fa-phone"></i> +91 9876543210</li>
+                        <li><i class="fas fa-envelope"></i> info@jharkhandtourism.com</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Jharkhand Tourism. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple JavaScript for interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category buttons
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Card buttons
+            const cardButtons = document.querySelectorAll('.card-btn');
+            cardButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('Feature coming soon!');
+                });
+            });
+            
+            // CTA button
+            document.querySelector('.cta-button').addEventListener('click', function() {
+                alert('Booking system coming soon!');
+            });
+        });
+    </script>
+</body>
+</html>
