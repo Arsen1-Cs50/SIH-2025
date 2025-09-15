@@ -32,8 +32,8 @@
 
         /* Header Styles */
         header {
-            background: #F5F5F5; 
-            color: #fdfbf9;    
+            background: #F5F5F5;
+            color: #fdfbf9;
             padding: 20px 0;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: sticky;
@@ -89,14 +89,14 @@
         }
 
         nav a {
-            color: #000000; 
+            color: #000000;
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s ease;
         }
 
         nav a:hover {
-            color: #ffffff; 
+            color: #ffffff;
         }
 
         .header-buttons {
@@ -797,7 +797,7 @@
                 width: 100%;
                 gap: 10px;
             }
-            
+
             .header-buttons button {
                 width: 100%;
             }
@@ -837,11 +837,111 @@
                 height: 85vh;
                 padding: 20px;
             }
-            
+
             .auth-content {
                 width: 95%;
                 padding: 20px;
             }
+        }
+
+        /* Mobile menu toggle (hamburger) */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #000000;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Media query for mobile view */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+                position: absolute;
+                top: 30px;
+                right: 20px;
+                z-index: 101;
+            }
+
+            /* Transform hamburger to X when active */
+            .menu-toggle.active .bar:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+
+            .menu-toggle.active .bar:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-toggle.active .bar:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+
+            /* Navigation adjustments for mobile */
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 90px;
+                left: 0;
+                width: 100%;
+                background-color: #F5F5F5;
+                padding: 20px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+                text-align: center;
+            }
+
+            /* Header buttons adjustments */
+            .header-buttons {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 90px;
+                left: 0;
+                width: 100%;
+                background-color: #F5F5F5;
+                padding: 20px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                gap: 15px;
+            }
+
+            .header-buttons.active {
+                display: flex;
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* For slightly larger screens (tablets) */
+        @media (min-width: 769px) and (max-width: 992px) {
+            nav ul {
+                gap: 15px;
+            }
+
+            nav a {
+                font-size: 14px;
+            }
+        }
+        #root{
+            display: none;
         }
     </style>
 </head>
@@ -849,7 +949,7 @@
 <body>
 
     <!-- React root element -->
-    <div id="root"></div> 
+    <div id="root"></div>
 
     <header>
         <div class="container header-content">
@@ -857,6 +957,11 @@
                 <div class="logo-icon">
                     <img src="logo3.png" alt="Jharkhand Tourism Logo" />
                 </div>
+            </div>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </div>
 
             <nav>
@@ -880,53 +985,53 @@
     <div class="auth-modal" id="authModal">
         <div class="auth-content">
             <span class="close-auth">&times;</span>
-            
+
             <div class="auth-tabs">
                 <div class="auth-tab active" data-tab="login">Login</div>
                 <div class="auth-tab" data-tab="signup">Sign Up</div>
             </div>
-            
+
             <form class="auth-form active" id="loginForm">
                 <div class="form-group">
                     <label for="loginEmail">Email</label>
                     <input type="email" id="loginEmail" placeholder="Enter your email" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="loginPassword">Password</label>
                     <input type="password" id="loginPassword" placeholder="Enter your password" required>
                 </div>
-                
+
                 <button type="submit" class="auth-submit">Login</button>
-                
+
                 <div class="auth-footer">
                     <p>Don't have an account? <a id="switchToSignup">Sign Up</a></p>
                 </div>
             </form>
-            
+
             <form class="auth-form" id="signupForm">
                 <div class="form-group">
                     <label for="signupName">Full Name</label>
                     <input type="text" id="signupName" placeholder="Enter your full name" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupEmail">Email</label>
                     <input type="email" id="signupEmail" placeholder="Enter your email" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupPassword">Password</label>
                     <input type="password" id="signupPassword" placeholder="Create a password" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupConfirmPassword">Confirm Password</label>
                     <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
                 </div>
-                
+
                 <button type="submit" class="auth-submit">Create Account</button>
-                
+
                 <div class="auth-footer">
                     <p>Already have an account? <a id="switchToLogin">Login</a></p>
                 </div>
@@ -1239,24 +1344,24 @@
             const switchToLogin = document.getElementById('switchToLogin');
 
             // Open modal for login
-            loginBtn.addEventListener('click', function() {
+            loginBtn.addEventListener('click', function () {
                 authModal.style.display = 'flex';
                 switchToTab('login');
             });
 
             // Open modal for signup
-            signupBtn.addEventListener('click', function() {
+            signupBtn.addEventListener('click', function () {
                 authModal.style.display = 'flex';
                 switchToTab('signup');
             });
 
             // Close auth modal
-            closeAuth.addEventListener('click', function() {
+            closeAuth.addEventListener('click', function () {
                 authModal.style.display = 'none';
             });
 
             // Close auth modal when clicking outside
-            window.addEventListener('click', function(event) {
+            window.addEventListener('click', function (event) {
                 if (event.target === authModal) {
                     authModal.style.display = 'none';
                 }
@@ -1264,39 +1369,39 @@
 
             // Switch between login and signup tabs
             authTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
+                tab.addEventListener('click', function () {
                     const tabName = this.getAttribute('data-tab');
                     switchToTab(tabName);
                 });
             });
 
             // Switch to signup from login
-            switchToSignup.addEventListener('click', function() {
+            switchToSignup.addEventListener('click', function () {
                 switchToTab('signup');
             });
 
             // Switch to login from signup
-            switchToLogin.addEventListener('click', function() {
+            switchToLogin.addEventListener('click', function () {
                 switchToTab('login');
             });
 
             // Form submissions
-            loginForm.addEventListener('submit', function(e) {
+            loginForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 alert('Login functionality would be implemented here!');
                 authModal.style.display = 'none';
             });
 
-            signupForm.addEventListener('submit', function(e) {
+            signupForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 const password = document.getElementById('signupPassword').value;
                 const confirmPassword = document.getElementById('signupConfirmPassword').value;
-                
+
                 if (password !== confirmPassword) {
                     alert('Passwords do not match!');
                     return;
                 }
-                
+
                 alert('Signup functionality would be implemented here!');
                 authModal.style.display = 'none';
             });
@@ -1310,7 +1415,7 @@
                         tab.classList.remove('active');
                     }
                 });
-                
+
                 // Show active form
                 if (tabName === 'login') {
                     loginForm.classList.add('active');
