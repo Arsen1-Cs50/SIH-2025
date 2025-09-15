@@ -182,17 +182,14 @@ const MapSection = () => {
         <div
           role="dialog"
           aria-modal="true"
-          style={{
-            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-          }}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-[1000]"
           onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
         >
-          <div style={{ background: '#fff', borderRadius: 16, width: '90%', maxWidth: 900, maxHeight: '85%', padding: 10, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button aria-label="Close" onClick={closeModal} style={{ background: 'transparent', border: 'none', fontSize: 24, lineHeight: 1, cursor: 'pointer', color: '#64748b' }}>×</button>
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl w-[90%] max-w-[900px] max-h-[85%] p-2 sm:p-3 md:p-4 flex flex-col border border-white/60 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+            <div className="flex justify-end">
+              <button aria-label="Close" onClick={closeModal} className="bg-white/0 border-0 text-xl leading-none cursor-pointer text-slate-500 hover:text-slate-700 rounded-full w-8 h-8 flex items-center justify-center transition-colors hover:bg-slate-100/60 focus:outline-none focus:ring-2 focus:ring-slate-300">×</button>
             </div>
-            <div ref={mapContainerRef} style={{ height: '70vh', width: '100%' }} />
+            <div ref={mapContainerRef} className="h-[70vh] w-full rounded-xl overflow-hidden ring-1 ring-black/5" />
           </div>
         </div>
       )}
