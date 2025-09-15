@@ -1,7 +1,6 @@
 // src/chatbot/Chatbot.js
 import React, { useState, useEffect, useRef } from 'react';
 import ChatbotService from './ChatbotService';
-import './Chatbot.css';
 
 // Language Switcher Component (improved accessibility and labels)
 const LanguageSwitcher = ({ currentLanguage, onLanguageChange }) => {
@@ -15,9 +14,9 @@ const LanguageSwitcher = ({ currentLanguage, onLanguageChange }) => {
   const current = languages.find(lang => lang.code === currentLanguage);
 
   return (
-    <div className="language-switcher">
+    <div className="relative mr-2">
       <button 
-        className="language-toggle"
+        className="bg-transparent border-2 border-green-600 rounded-full w-9 h-9 flex items-center justify-center cursor-pointer text-base transition-all hover:bg-green-600 hover:text-white"
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -26,13 +25,12 @@ const LanguageSwitcher = ({ currentLanguage, onLanguageChange }) => {
       >
         <span aria-hidden="true">{current?.emoji || '🌐'}</span>
       </button>
-      
       {isOpen && (
-        <div className="language-dropdown" role="listbox" aria-label={currentLanguage === 'hi' ? 'भाषा चयनकर्ता' : 'Language selector'}>
+        <div className="absolute top-full right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[120px] mt-1" role="listbox" aria-label={currentLanguage === 'hi' ? 'भाषा चयनकर्ता' : 'Language selector'}>
           {languages.map((language) => (
             <button
               key={language.code}
-              className={`language-option ${currentLanguage === language.code ? 'active' : ''}`}
+              className={`flex items-center gap-2 px-3 py-2 w-full text-left transition-colors text-xs ${currentLanguage === language.code ? 'bg-green-50 text-green-800' : 'hover:bg-gray-100'}`}
               role="option"
               aria-selected={currentLanguage === language.code}
               onClick={() => {
@@ -40,8 +38,8 @@ const LanguageSwitcher = ({ currentLanguage, onLanguageChange }) => {
                 setIsOpen(false);
               }}
             >
-              <span className="language-emoji" aria-hidden="true">{language.emoji}</span>
-              <span className="language-name">{language.nativeName} ({language.name})</span>
+              <span className="text-sm" aria-hidden="true">{language.emoji}</span>
+              <span className="font-medium">{language.nativeName} ({language.name})</span>
             </button>
           ))}
         </div>
@@ -155,7 +153,7 @@ const Chatbot = () => {
       const result = ChatbotService.setLanguage(languageCode);
       if (result.success) {
         setCurrentLanguage(languageCode);
-        
+        localStorage.setItem('chatbot_language', languageCode);
         // Add language change confirmation message
         const confirmationMessage = {
           type: 'bot',
@@ -200,65 +198,60 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="chatbot-container">
+    <div className="fixed bottom-5 right-5 z-[1000] font-sans">
       {!isOpen && (
-        <button className="chatbot-toggle" onClick={toggleChat}>
+        <button className="bg-gradient-to-br from-green-600 to-green-700 text-white border-0 px-5 py-3 rounded-full cursor-pointer shadow-[0_4px_15px_rgba(0,0,0,0.2)] flex items-center gap-2 font-semibold transition-all text-sm hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(0,0,0,0.3)]" onClick={toggleChat}>
           <span>💬</span>
           {currentLanguage === 'hi' ? 'यात्रा सहायक' : 'Travel Assistant'}
         </button>
       )}
-      
       {isOpen && (
-        <div className="chatbot-window">
-          <div className="chatbot-header">
-            <h3>{currentLanguage === 'hi' ? 'झारखंड पर्यटन सहायक' : 'Jharkhand Tourism Assistant'}</h3>
-            <div className="header-controls">
+        <div className="w-[350px] h-[500px] bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden transition-all">
+          <div className="bg-gradient-to-br from-green-600 to-green-800 text-white p-4 flex items-center justify-between shrink-0">
+            <h3 className="m-0 text-base font-semibold">{currentLanguage === 'hi' ? 'झारखंड पर्यटन सहायक' : 'Jharkhand Tourism Assistant'}</h3>
+            <div className="flex items-center gap-1">
               <LanguageSwitcher 
                 currentLanguage={currentLanguage} 
                 onLanguageChange={handleLanguageChange} 
               />
-              <button className="close-btn" onClick={toggleChat}>×</button>
+              <button className="bg-transparent border-0 text-white text-xl cursor-pointer p-0 w-[30px] h-[30px] rounded-full flex items-center justify-center transition-colors hover:bg-white/20" onClick={toggleChat}>×</button>
             </div>
           </div>
-          
-          <div className="chatbot-messages">
+          <div className="flex-1 p-4 overflow-y-auto bg-slate-50 flex flex-col gap-3 scroll-smooth">
             {messages.length === 0 && (
-              <div className="welcome-message">
-                <p>{currentLanguage === 'hi' ? 'नमस्ते! 👋 मैं आपका झारखंड ट्रैवल असिस्टेंट हूं।' : 'Namaste! 👋 I\'m your Jharkhand travel assistant.'}</p>
-                <p>{currentLanguage === 'hi' ? 'आज मैं आपकी यात्रा की योजना बनाने में कैसे मदद कर सकता हूं?' : 'How can I help you plan your trip today?'}</p>
+              <div className="text-center p-5 bg-white rounded-xl mb-2 shadow-[0_2px_8px_rgba(0,0,0,0.1)] leading-relaxed">
+                <p className="m-2 text-slate-600 text-sm">{currentLanguage === 'hi' ? 'नमस्ते! 👋 मैं आपका झारखंड ट्रैवल असिस्टेंट हूं।' : 'Namaste! 👋 I\'m your Jharkhand travel assistant.'}</p>
+                <p className="m-2 text-slate-600 text-sm">{currentLanguage === 'hi' ? 'आज मैं आपकी यात्रा की योजना बनाने में कैसे मदद कर सकता हूं?' : 'How can I help you plan your trip today?'}</p>
               </div>
             )}
-            
             {messages.map((msg, index) => (
-              <div key={index} className={`message ${msg.type}`}>
-                <div className="message-content">
+              <div key={index} className={`flex flex-col animate-[fadeIn_0.3s_ease] max-w-[85%] ${msg.type === 'user' ? 'self-end' : 'self-start'}`}>
+                <div className={`px-4 py-3 rounded-2xl break-words leading-snug text-sm ${msg.type === 'user' ? 'bg-gradient-to-br from-green-600 to-green-700 text-white rounded-br-md' : 'bg-white text-slate-800 border border-gray-200 rounded-bl-md shadow-[0_2px_5px_rgba(0,0,0,0.05)]'}`}>
                   {msg.text}
                 </div>
-                <span className="message-time">
+                <span className={`text-[11px] text-gray-500 mt-1 px-2 ${msg.type === 'user' ? 'text-right' : 'text-left'}`}>
                   {formatTimestamp(msg.timestamp)}
                 </span>
               </div>
             ))}
-            
             {isLoading && (
-              <div className="message bot">
-                <div className="message-content">
-                  <div className="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+              <div className="self-start">
+                <div className="px-4 py-3 rounded-2xl bg-white border border-gray-200 rounded-bl-md w-fit">
+                  <div className="flex gap-1">
+                    <span className="h-2 w-2 bg-gray-300 rounded-full animate-bounce [animation-delay:0ms]"></span>
+                    <span className="h-2 w-2 bg-gray-300 rounded-full animate-bounce [animation-delay:200ms]"></span>
+                    <span className="h-2 w-2 bg-gray-300 rounded-full animate-bounce [animation-delay:400ms]"></span>
                   </div>
                 </div>
               </div>
             )}
-            
             {showOptions && messages.length === 0 && (
-              <div className="quick-options">
-                <p>{currentLanguage === 'hi' ? 'त्वरित प्रश्न:' : 'Quick questions:'}</p>
+              <div className="mt-2 bg-white rounded-xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+                <p className="m-0 mb-2 text-xs text-slate-600 font-medium">{currentLanguage === 'hi' ? 'त्वरित प्रश्न:' : 'Quick questions:'}</p>
                 {quickOptions[currentLanguage].map((option, index) => (
                   <button
                     key={index}
-                    className="quick-option-btn"
+                    className="bg-white border border-gray-200 rounded-2xl px-3 py-2 m-1 text-xs cursor-pointer transition-colors text-slate-800 truncate max-w-full hover:bg-green-600 hover:text-white hover:border-green-600"
                     onClick={() => handleQuickOptionClick(option)}
                   >
                     {option}
@@ -266,11 +259,9 @@ const Chatbot = () => {
                 ))}
               </div>
             )}
-            
             <div ref={messagesEndRef} />
           </div>
-          
-          <div className="chatbot-input">
+          <div className="p-4 border-t border-gray-200 bg-white flex gap-2 shrink-0">
             <input
               type="text"
               value={inputMessage}
@@ -278,10 +269,12 @@ const Chatbot = () => {
               onKeyPress={handleKeyPress}
               placeholder={currentLanguage === 'hi' ? 'झारखंड पर्यटन के बारे में पूछें...' : 'Ask about Jharkhand tourism...'}
               disabled={isLoading}
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-full outline-none text-sm bg-white text-slate-800 transition-[border-color,box-shadow] focus:border-green-600 focus:shadow-[0_0_0_2px_rgba(22,163,74,0.1)] disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
             <button 
               onClick={() => handleSendMessage()} 
               disabled={isLoading || !inputMessage.trim()}
+              className="bg-green-600 text-white border-0 px-5 py-3 rounded-full cursor-pointer font-medium text-sm min-w-[60px] transition-all enabled:hover:bg-green-700 enabled:hover:-translate-y-0.5 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               {currentLanguage === 'hi' ? 'भेजें' : 'Send'}
             </button>
