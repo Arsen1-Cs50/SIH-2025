@@ -41,27 +41,11 @@ const SUPPORTED_LANGUAGES = {
   hi: { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', emoji: '🇮🇳' }
 };
 
-// Cache system
+// Cache system (kept for short-lived response caching only)
 const responseCache = new Map();
 const CACHE_DURATION = 5 * 60 * 1000;
 
-// Helper functions
-const generateSessionId = () => {
-  return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-};
-
-const getSessionId = () => {
-  try {
-    let sessionId = localStorage.getItem('chatbot_session_id');
-    if (!sessionId) {
-      sessionId = generateSessionId();
-      localStorage.setItem('chatbot_session_id', sessionId);
-    }
-    return sessionId;
-  } catch (error) {
-    return generateSessionId();
-  }
-};
+// Helper functions (no session id management to avoid session history)
 
 const getCurrentLanguage = () => {
   try {
@@ -109,44 +93,12 @@ const getTranslatedKnowledge = (language = 'en') => {
   return JHARKHAND_KNOWLEDGE;
 };
 
-const saveChatToLocal = (sessionId, message, response, metadata = {}) => {
-  try {
-    const chatHistory = JSON.parse(localStorage.getItem('chat_history') || '{}');
-    if (!chatHistory[sessionId]) {
-      chatHistory[sessionId] = [];
-    }
-    
-    chatHistory[sessionId].push({
-      message,
-      response,
-      timestamp: new Date().toISOString(),
-      language: metadata.language || getCurrentLanguage(),
-      metadata
-    });
-    
-    if (chatHistory[sessionId].length > 50) {
-      chatHistory[sessionId] = chatHistory[sessionId].slice(-50);
-    }
-    
-    localStorage.setItem('chat_history', JSON.stringify(chatHistory));
-  } catch (error) {
-    console.warn('Error saving chat to local storage:', error);
-  }
-};
-
-const getChatHistoryFromLocal = (sessionId) => {
-  try {
-    const chatHistory = JSON.parse(localStorage.getItem('chat_history') || '{}');
-    return chatHistory[sessionId] || [];
-  } catch (error) {
-    console.warn('Error reading chat history:', error);
-    return [];
-  }
-};
+// Removed local chat history persistence for a stateless chatbot experience
 
 // OpenAI API Integration with multilingual support
 const callOpenAI = async (message, conversationHistory = [], language = 'en') => {
-  const cacheKey = `${message}_${language}_${conversationHistory.length}`;
+  // We ignore long-term conversation history to avoid session storage; only pass a small recent context if provided by caller
+  const cacheKey = `${message}_${language}_${conversationHistory.slice(-2).length}`;
   const cachedResponse = responseCache.get(cacheKey);
   
   if (cachedResponse && (Date.now() - cachedResponse.timestamp < CACHE_DURATION)) {
@@ -202,7 +154,7 @@ GUIDELINES:
         model: 'gpt-3.5-turbo',
         messages: [
           { role: 'system', content: systemPrompt },
-          ...conversationHistory.slice(-8),
+          ...conversationHistory.slice(-2),
           { role: 'user', content: message }
         ],
         max_tokens: 300,
@@ -274,67 +226,33 @@ const getFallbackResponse = (message, language = 'en') => {
   return "I'm here to help you explore Jharkhand! You can ask me about tourist destinations, cultural information, accommodation, transportation, or itinerary planning.";
 };
 
-// Main service function with language support
-const sendMessage = async (message, sessionId = null) => {
-  const currentSessionId = sessionId || getSessionId();
+// Main service function with language support (stateless, no local history)
+const sendMessage = async (message) => {
   const currentLanguage = getCurrentLanguage();
-  const startTime = Date.now();
-  
   try {
-    const history = getChatHistoryFromLocal(currentSessionId);
-    const conversationHistory = history.flatMap(item => [
-      { role: 'user', content: item.message },
-      { role: 'assistant', content: item.response }
-    ]);
-
-    // Check if user is requesting language change
+    // Language change intent detection (kept for convenience, but no history is stored)
     if (/(हिंदी|hindi|language|भाषा)/i.test(message) && /(change|switch|बदलो|करें)/i.test(message)) {
       const newLanguage = currentLanguage === 'en' ? 'hi' : 'en';
       setCurrentLanguage(newLanguage);
       const response = newLanguage === 'hi' ? 
         "भाषा हिंदी में बदल दी गई है! 🌐" : 
         "Language changed to English! 🌐";
-      
-      saveChatToLocal(currentSessionId, message, response, { 
-        source: 'language_change',
-        language: newLanguage
-      });
-      
       return {
         response: response,
-        session_id: currentSessionId,
         language: newLanguage
       };
     }
 
-    const response = await callOpenAI(message, conversationHistory, currentLanguage);
-    
-    saveChatToLocal(currentSessionId, message, response, { 
-      source: 'openai',
-      language: currentLanguage,
-      response_time: Date.now() - startTime
-    });
-    
+    const response = await callOpenAI(message, [], currentLanguage);
     return {
       response: response,
-      session_id: currentSessionId,
       language: currentLanguage
     };
-
   } catch (error) {
     console.error('Error in sendMessage:', error);
-    
     const fallbackResponse = getFallbackResponse(message, getCurrentLanguage());
-    
-    saveChatToLocal(currentSessionId, message, fallbackResponse, { 
-      source: 'fallback',
-      error: error.message,
-      language: getCurrentLanguage()
-    });
-    
     return {
       response: fallbackResponse,
-      session_id: currentSessionId,
       error: error.message,
       language: getCurrentLanguage()
     };
@@ -368,11 +286,7 @@ const ChatbotService = {
     }
   },
 
-  getChatHistory: async () => {
-    const sessionId = getSessionId();
-    const history = getChatHistoryFromLocal(sessionId);
-    return { messages: history };
-  },
+  // No chat history exposure; chatbot is stateless between page loads
 
   getCurrentLanguage: () => ({
     code: getCurrentLanguage(),
@@ -396,15 +310,11 @@ const ChatbotService = {
   getSupportedLanguages: () => Object.values(SUPPORTED_LANGUAGES),
 
   clearSession: () => {
-    localStorage.removeItem('chatbot_session_id');
+    // Only clear transient in-memory cache
     responseCache.clear();
   },
 
-  exportChatHistory: () => {
-    const sessionId = getSessionId();
-    const history = getChatHistoryFromLocal(sessionId);
-    return JSON.stringify(history, null, 2);
-  }
+  // Removed exportChatHistory since we no longer persist chats
 };
 
 export default ChatbotService;

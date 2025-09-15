@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ChatbotService from './ChatbotService';
 import './Chatbot.css';
 
-// Language Switcher Component
+// Language Switcher Component (improved accessibility and labels)
 const LanguageSwitcher = ({ currentLanguage, onLanguageChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -12,29 +12,36 @@ const LanguageSwitcher = ({ currentLanguage, onLanguageChange }) => {
     { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', emoji: '🇮🇳' }
   ];
 
+  const current = languages.find(lang => lang.code === currentLanguage);
+
   return (
     <div className="language-switcher">
       <button 
         className="language-toggle"
         onClick={() => setIsOpen(!isOpen)}
-        title="Change language"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label={currentLanguage === 'hi' ? 'भाषा बदलें' : 'Change language'}
+        title={currentLanguage === 'hi' ? 'भाषा बदलें' : 'Change language'}
       >
-        <span>{languages.find(lang => lang.code === currentLanguage)?.emoji || '🌐'}</span>
+        <span aria-hidden="true">{current?.emoji || '🌐'}</span>
       </button>
       
       {isOpen && (
-        <div className="language-dropdown">
+        <div className="language-dropdown" role="listbox" aria-label={currentLanguage === 'hi' ? 'भाषा चयनकर्ता' : 'Language selector'}>
           {languages.map((language) => (
             <button
               key={language.code}
               className={`language-option ${currentLanguage === language.code ? 'active' : ''}`}
+              role="option"
+              aria-selected={currentLanguage === language.code}
               onClick={() => {
                 onLanguageChange(language.code);
                 setIsOpen(false);
               }}
             >
-              <span className="language-emoji">{language.emoji}</span>
-              <span className="language-name">{language.nativeName}</span>
+              <span className="language-emoji" aria-hidden="true">{language.emoji}</span>
+              <span className="language-name">{language.nativeName} ({language.name})</span>
             </button>
           ))}
         </div>
@@ -73,10 +80,8 @@ const Chatbot = () => {
     ]
   };
 
-  // Load chat history on component mount
+  // On mount: load saved language preference only
   useEffect(() => {
-    loadChatHistory();
-    // Load saved language preference
     const savedLanguage = localStorage.getItem('chatbot_language');
     if (savedLanguage) {
       setCurrentLanguage(savedLanguage);
@@ -92,21 +97,7 @@ const Chatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const loadChatHistory = async () => {
-    try {
-      const history = await ChatbotService.getChatHistory();
-      if (history.messages) {
-        const formattedMessages = history.messages.map(msg => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp),
-          type: msg.type || 'bot'
-        }));
-        setMessages(formattedMessages);
-      }
-    } catch (error) {
-      console.error('Error loading chat history:', error);
-    }
-  };
+  // Removed loading chat history to keep conversation in-memory only
 
   const handleSendMessage = async (message = null) => {
     const finalMessage = message || inputMessage.trim();
