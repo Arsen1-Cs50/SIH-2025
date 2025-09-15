@@ -630,86 +630,7 @@
             background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
         }
 
-        /* Map Section */
-        .map-section {
-            padding: 80px 0;
-            background: white;
-            display: none;
-            /* Initially hidden */
-        }
-
-        #touristMap {
-            height: 500px;
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            margin-top: 30px;
-            z-index: 1;
-        }
-
-        .map-popup h4 {
-            margin: 0 0 8px 0;
-            color: #059669;
-        }
-
-        .map-popup p {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-        }
-
-        .map-popup a {
-            color: #059669;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .map-popup a:hover {
-            text-decoration: underline;
-        }
-
-        /* Modal for map */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 1000px;
-            height: 80vh;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #64748b;
-            z-index: 1001;
-        }
-
-        .close-modal:hover {
-            color: #059669;
-        }
-
-        #modalMap {
-            height: calc(100% - 40px);
-            width: 100%;
-            border-radius: 12px;
-        }
+        /* Map styles moved into React component */
 
         /* Footer */
         footer {
@@ -827,16 +748,7 @@
                 align-items: center;
             }
 
-            #touristMap,
-            #modalMap {
-                height: 350px;
-            }
-
-            .modal-content {
-                width: 95%;
-                height: 85vh;
-                padding: 20px;
-            }
+            /* Map modal styles moved into React component */
 
             .auth-content {
                 width: 95%;
@@ -1069,7 +981,7 @@
                     <p>Secure transactions with blockchain technology</p>
                 </div>
 
-                <div class="feature-card" id="mapFeature">
+                <div class="feature-card" data-open-map>
                     <div class="feature-icon">
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
@@ -1192,12 +1104,7 @@
         </div>
     </section>
 
-    <div class="modal" id="mapModal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div id="modalMap"></div>
-        </div>
-    </div>
+    <!-- Map modal removed; handled by React MapSection -->
 
     <section class="culture" id="culture">
         <div class="container">
@@ -1312,22 +1219,39 @@
                 alert('Booking system coming soon!');
             });
 
-            // Map feature card click handler
-            document.getElementById('mapFeature').addEventListener('click', function () {
-                openMapModal();
+            // Mobile navbar toggle
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navList = document.querySelector('nav ul');
+            const headerButtons = document.querySelector('.header-buttons');
+
+            if (mobileMenu && navList && headerButtons) {
+                mobileMenu.addEventListener('click', function () {
+                    mobileMenu.classList.toggle('active');
+                    navList.classList.toggle('active');
+                    headerButtons.classList.toggle('active');
+                });
+            }
+
+            // Smooth scroll for nav links and close mobile menu on selection
+            document.querySelectorAll('nav a').forEach(function (link) {
+                link.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId && targetId.startsWith('#')) {
+                        e.preventDefault();
+                        const targetEl = document.querySelector(targetId);
+                        if (targetEl) {
+                            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                        if (mobileMenu && navList && headerButtons) {
+                            mobileMenu.classList.remove('active');
+                            navList.classList.remove('active');
+                            headerButtons.classList.remove('active');
+                        }
+                    }
+                });
             });
 
-            // Modal close button
-            document.querySelector('.close-modal').addEventListener('click', function () {
-                document.getElementById('mapModal').style.display = 'none';
-            });
-
-            // Close modal when clicking outside
-            window.addEventListener('click', function (event) {
-                if (event.target === document.getElementById('mapModal')) {
-                    document.getElementById('mapModal').style.display = 'none';
-                }
-            });
+            // Map interactions handled by React MapSection
 
             // Auth functionality
             const authModal = document.getElementById('authModal');
@@ -1424,253 +1348,7 @@
             }
         });
 
-        // Function to open map modal and load map
-        function openMapModal() {
-            // Show the modal
-            document.getElementById('mapModal').style.display = 'flex';
-
-            // Check if Leaflet is already loaded
-            if (typeof L === 'undefined') {
-                // Load Leaflet CSS
-                const leafletCSS = document.createElement('link');
-                leafletCSS.rel = 'stylesheet';
-                leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-                leafletCSS.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-                leafletCSS.crossOrigin = '';
-                document.head.appendChild(leafletCSS);
-
-                // Load Leaflet JS
-                const leafletJS = document.createElement('script');
-                leafletJS.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-                leafletJS.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-                leafletJS.crossOrigin = '';
-                leafletJS.onload = initializeMap;
-                document.head.appendChild(leafletJS);
-            } else {
-                // Leaflet is already loaded, just initialize the map
-                initializeMap();
-            }
-        }
-
-        // Function to initialize the map
-        function initializeMap() {
-            // Check if map is already initialized
-            if (window.touristMap) {
-                window.touristMap.remove();
-            }
-
-            // Initialize the map
-            window.touristMap = L.map('modalMap').setView([23.6345, 85.3803], 8); // Centered on Jharkhand
-
-            // Add OpenStreetMap tiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(window.touristMap);
-
-            // Define tourist locations with coordinates and info
-            const touristSpots = [
-                {
-                    name: "Hundru Falls",
-                    coords: [23.4639, 85.6590],
-                    type: "Waterfall",
-                    description: "Spectacular 322 feet waterfall cascading through rocky terrain",
-                    link: "#"
-                },
-                {
-                    name: "Betla National Park",
-                    coords: [23.8876, 84.1875],
-                    type: "Wildlife",
-                    description: "Home to tigers, elephants and diverse flora and fauna",
-                    link: "#"
-                },
-                {
-                    name: "Jagannath Temple",
-                    coords: [23.3441, 85.3096],
-                    type: "Heritage",
-                    description: "Ancient temple showcasing exquisite Kalinga architecture",
-                    link: "#"
-                },
-                {
-                    name: "Deoghar - Baidyanath Temple",
-                    coords: [24.4823, 86.7000],
-                    type: "Spiritual",
-                    description: "Sacred pilgrimage site with the famous Baidyanath Temple",
-                    link: "#"
-                },
-                {
-                    name: "Dassam Falls",
-                    coords: [23.3594, 85.2552],
-                    type: "Waterfall",
-                    description: "Beautiful waterfall located on the Kanchi River",
-                    link: "#"
-                },
-                {
-                    name: "Netarhat",
-                    coords: [23.4833, 84.2667],
-                    type: "Hill Station",
-                    description: "Popular hill station known as the 'Queen of Chotanagpur'",
-                    link: "#"
-                },
-                {
-                    name: "Patratu Valley",
-                    coords: [23.6167, 85.2833],
-                    type: "Scenic",
-                    description: "Serpentine valley with breathtaking views",
-                    link: "#"
-                },
-                {
-                    name: "Jonha Falls",
-                    coords: [23.4289, 85.5450],
-                    type: "Waterfall",
-                    description: "Also known as Gautamdhara, a beautiful waterfall near Ranchi",
-                    link: "#"
-                },
-                {
-                    name: "Hazaribagh National Park",
-                    coords: [24.0167, 85.3500],
-                    type: "Wildlife",
-                    description: "Home to diverse wildlife including tigers, leopards and sambar deer",
-                    link: "#"
-                },
-                {
-                    name: "Palamau Fort",
-                    coords: [24.0833, 84.0667],
-                    type: "Heritage",
-                    description: "Historic fort with great archaeological significance",
-                    link: "#"
-                },
-                {
-                    name: "Sun Temple",
-                    coords: [23.3439, 85.3095],
-                    type: "Spiritual",
-                    description: "Beautiful temple shaped like a chariot with intricate carvings",
-                    link: "#"
-                },
-                {
-                    name: "McCluskieganj",
-                    coords: [23.6333, 85.1667],
-                    type: "Heritage",
-                    description: "Colonial-era town with Anglo-Indian architecture",
-                    link: "#"
-                },
-                {
-                    name: "Shikharji",
-                    coords: [23.9667, 86.1333],
-                    type: "Spiritual",
-                    description: "Sacred pilgrimage site for Jains, believed to be where 20 Tirthankaras attained Nirvana",
-                    link: "#"
-                },
-                {
-                    name: "Rajrappa Temple",
-                    coords: [23.6333, 85.7167],
-                    type: "Spiritual",
-                    description: "Ancient temple dedicated to Goddess Chhinmastika",
-                    link: "#"
-                },
-                {
-                    name: "Topchanchi Lake",
-                    coords: [23.9000, 86.2000],
-                    type: "Scenic",
-                    description: "Serene lake surrounded by hills, perfect for picnics",
-                    link: "#"
-                },
-                {
-                    name: "Lodh Falls",
-                    coords: [23.7333, 84.6167],
-                    type: "Waterfall",
-                    description: "Highest waterfall in Jharkhand, also known as Burhaghagh Falls",
-                    link: "#"
-                },
-                {
-                    name: "Tilaiya Dam",
-                    coords: [24.1833, 85.4333],
-                    type: "Scenic",
-                    description: "Picturesque dam on the Barakar River with boating facilities",
-                    link: "#"
-                },
-                {
-                    name: "Tagore Hill",
-                    coords: [23.3833, 85.3333],
-                    type: "Heritage",
-                    description: "Hill associated with Rabindranath Tagore, offering panoramic views of Ranchi",
-                    link: "#"
-                },
-                {
-                    name: "Pahari Mandir",
-                    coords: [23.3667, 85.3333],
-                    type: "Spiritual",
-                    description: "Hilltop temple dedicated to Lord Shiva with city views",
-                    link: "#"
-                },
-                {
-                    name: "Dalma Wildlife Sanctuary",
-                    coords: [22.9333, 86.2000],
-                    type: "Wildlife",
-                    description: "Sanctuary known for its elephant population and diverse flora",
-                    link: "#"
-                }
-            ];
-
-            // Create custom icons for different types of locations
-            const iconColors = {
-                "Waterfall": "#059669",
-                "Wildlife": "#f59e0b",
-                "Heritage": "#ef4444",
-                "Spiritual": "#8b5cf6",
-                "Hill Station": "#0ea5e9",
-                "Scenic": "#ec4899"
-            };
-
-            // Add markers for each tourist spot
-            touristSpots.forEach(spot => {
-                const color = iconColors[spot.type] || "#059669";
-                const customIcon = L.icon({
-                    iconUrl: 'data:image/svg+xml;base64,' + btoa(`
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="24px" height="24px">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                        </svg>
-                    `),
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 24],
-                    popupAnchor: [0, -24]
-                });
-
-                const marker = L.marker(spot.coords, { icon: customIcon }).addTo(window.touristMap);
-                marker.bindPopup(`
-                    <div class="map-popup">
-                        <h4>${spot.name}</h4>
-                        <p><strong>Type:</strong> ${spot.type}</p>
-                        <p>${spot.description}</p>
-                        <a href="${spot.link}">Learn more</a>
-                    </div>
-                `);
-            });
-
-            // Add a legend
-            const legend = L.control({ position: 'bottomright' });
-            legend.onAdd = function (map) {
-                const div = L.DomUtil.create('div', 'info legend');
-                div.style.backgroundColor = 'white';
-                div.style.padding = '10px';
-                div.style.borderRadius = '5px';
-                div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
-
-                let labels = ['<strong>Tourist Attractions</strong>'];
-
-                for (const type in iconColors) {
-                    labels.push(
-                        `<i style="background:${iconColors[type]}; width: 12px; height: 12px; display: inline-block; border-radius: 50%; margin-right: 5px;"></i> ${type}`
-                    );
-                }
-
-                div.innerHTML = labels.join('<br>');
-                return div;
-            };
-            legend.addTo(window.touristMap);
-
-            // Adjust map view after markers are added
-            window.touristMap.invalidateSize();
-        }
+        // Map functions removed; handled by React MapSection
     </script>
 </body>
 
