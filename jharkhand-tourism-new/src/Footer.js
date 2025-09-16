@@ -74,7 +74,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2023 Jharkhand Tourism. All rights reserved.</p>
+          <p>&copy; 2025 Jharkhand Tourism by RootsReimagined.</p>
         </div>
       </div>
     </footer>
